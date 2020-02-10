@@ -6,6 +6,7 @@ The purpose of this project is to create an ETL pipeline to enable the Sparkify 
 
 ## Running:
 
+In the scripts folder:  
 **Option 1**: Run a single script to re-intialise the Postgres tables and run etl2 script to batch process and import the .json files
 In the command line , execute:
 
@@ -38,6 +39,8 @@ etl.ipynb: Working notebook to test methodology and develop functions used in et
 test.ipynb: Testing notebook compatible with the Udacity workspace to verify Postgres tables have been loaded and updated correctly.
 
 test2.ipynb: Testing notebook modified to work on local system with a local Postgres instance installed to verify Postgres tables have been loaded and updated correctly.
+
+Queries_Demos.ipynb: Notebook of demo queries using available data. A number of these queries and sample results have been included below in the Queries section
 
 ## Relational Database Structure
 

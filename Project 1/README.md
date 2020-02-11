@@ -6,6 +6,10 @@ The purpose of this project is to create an ETL pipeline to enable the Sparkify 
 
 ## Running:
 
+If running the Postgres server locally (if not configured to autostart):
+Start: pg_ctl -D /usr/local/var/postgres start
+Stop: pg_ctl -D /usr/local/var/postgres stop
+
 In the scripts folder:  
 **Option 1**: Run a single script to re-intialise the Postgres tables and run etl2 script to batch process and import the .json files
 In the command line , execute:

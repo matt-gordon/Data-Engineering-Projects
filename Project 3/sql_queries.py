@@ -1,3 +1,12 @@
+"""Define Sparkify analytics SQL statements to create, clean and populate analytics tables.
+
+This file defines all commands used by create_tables.py and etl.py to create tables, drop tables,
+import data into staging tables, clean staging tables and populate the fact and dimensions tables to
+enable further analytics.
+
+    Typical usage:
+        from sql_queries import *
+"""
 import configparser
 
 # CONFIG
@@ -15,7 +24,9 @@ artist_table_drop = "DROP TABLE IF EXISTS artists"
 time_table_drop = "DROP TABLE IF EXISTS time"
 
 # CREATE TABLES
-
+## VARCHAR used in lieu of Numeric/Float/Double as values were not being import correctly
+## into Redshift during COPY execution.  During fact and dimension table population, the values
+## must be cast to the correct data type
 staging_events_table_create= ("""CREATE TABLE IF NOT EXISTS staging_events_table
                                 (
                                     artist VARCHAR,
@@ -53,10 +64,11 @@ staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs_table
                                     year INT
                                 )
 """)
-
+## Redshift does not have ON CONFLICT type statement therefore intent
+## must be considered using alternative methods during data ingestion
 songplay_table_create = ("""CREATE TABLE IF NOT EXISTS fact_songplays 
                         (
-                            songplay_id INT IDENTITY(0,1) PRIMARY KEY, 
+                            songplay_id INT IDENTITY(0,1), 
                             user_id BIGINT NOT NULL, 
                             song_id VARCHAR NOT NULL, 
                             artist_id VARCHAR NOT NULL, 
@@ -64,7 +76,13 @@ songplay_table_create = ("""CREATE TABLE IF NOT EXISTS fact_songplays
                             start_time TIMESTAMP NOT NULL, 
                             level VARCHAR NOT NULL, 
                             location VARCHAR NOT NULL, 
-                            user_agent VARCHAR NOT NULL
+                            user_agent VARCHAR NOT NULL,
+                            primary key(songplay_id),
+                            foreign key(user_id) references dim_users(user_id),
+                            foreign key(start_time) references dim_time(start_time),
+                            foreign key(artist_id) references dim_artists(artist_id),
+                            foreign key(song_id) references dim_songs(song_id),
+                            sortkey(start_time)
                         );
 """)
 
@@ -74,7 +92,8 @@ user_table_create = ("""CREATE TABLE IF NOT EXISTS dim_users
                         first_name VARCHAR NOT NULL, 
                         last_name VARCHAR NOT NULL, 
                         gender CHAR NOT NULL, 
-                        level VARCHAR(4) NOT NULL
+                        level VARCHAR(4) NOT NULL,
+                        sortkey(level)
                     );
 """)
 
@@ -84,7 +103,8 @@ song_table_create = ("""CREATE TABLE IF NOT EXISTS dim_songs
                         artist_id VARCHAR NOT NULL, 
                         title VARCHAR NOT NULL, 
                         year INT NOT NULL, 
-                        duration FLOAT8 NOT NULL
+                        duration FLOAT8 NOT NULL,
+                        sortkey(year)
                     );
 """)
 
@@ -106,12 +126,12 @@ time_table_create = ("""CREATE TABLE IF NOT EXISTS dim_time
                         week INT NOT NULL, 
                         month INT NOT NULL, 
                         year INT NOT NULL, 
-                        weekday VARCHAR NOT NULL
+                        weekday VARCHAR NOT NULL,
+                        sortkey(start_time)
                     );
 """)
 
 # STAGING TABLES
-
 staging_events_copy =  ("""
                             COPY staging_events_table FROM {}
                             iam_role {}
@@ -121,11 +141,10 @@ staging_events_copy =  ("""
 staging_songs_copy =    ("""
                             COPY staging_songs_table FROM {}
                             iam_role {}
-                            json 'auto';
+                            json 'auto' TRUNCATECOLUMNS;
                         """).format(config['S3']['SONG_DATA'],config['IAM_ROLE']['ARN'])
 
 # FINAL TABLES
-
 songplay_table_insert = ("""
                             INSERT INTO fact_songplays (user_id, song_id, artist_id, session_id, start_time, level, location, user_agent)
                             SELECT set.userid as user_id, sst.song_id as song_id, sst.artist_id as artist_id, set.sessionid as session_id, 
@@ -138,7 +157,7 @@ songplay_table_insert = ("""
                             WHERE set.page = 'NextSong'
 """)
 
-# Redshift doesn't have ON CONSTRAINT type functionality and needed the ability to find if there were duplicate entries of user_id, 
+# Redshift doesn't have ON CONFLICT type functionality and needed the ability to find if there were duplicate entries of user_id, 
 # to return only the most recent one when building the table so that when querying the user table, we'd see the latest status for that user.  
 # The below query was based upon approach learnt in a blog by Jack Wilson https://thoughtbot.com/blog/ordering-within-a-sql-group-by-clause
 
@@ -175,7 +194,7 @@ time_table_insert = ("""
                         EXTRACT(WEEK FROM set.start_time) as week,
                         EXTRACT(MONTH FROM set.start_time) as month,
                         EXTRACT(YEAR FROM set.start_time) as year,
-                        EXTRACT(WEEKDAY FROM set.start_time) as weekday
+                        TRIM(' ' FROM TO_CHAR(set.start_time,'Day')) as weekday
                         FROM staging_events_table as set;
 """)
 

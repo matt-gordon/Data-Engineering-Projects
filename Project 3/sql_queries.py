@@ -15,13 +15,13 @@ config.read('dwh.cfg')
 
 # DROP TABLES
 
-staging_events_table_drop = "DROP TABLE IF EXISTS staging_events_table"
-staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs_table"
-songplay_table_drop = "DROP TABLE IF EXISTS songplays"
-user_table_drop = "DROP TABLE IF EXISTS users"
-song_table_drop = "DROP TABLE IF EXISTS songs"
-artist_table_drop = "DROP TABLE IF EXISTS artists"
-time_table_drop = "DROP TABLE IF EXISTS time"
+staging_events_table_drop = "DROP TABLE IF EXISTS staging_events_table;"
+staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs_table;"
+songplay_table_drop = "DROP TABLE IF EXISTS fact_songplays;"
+user_table_drop = "DROP TABLE IF EXISTS dim_users;"
+song_table_drop = "DROP TABLE IF EXISTS dim_songs;"
+artist_table_drop = "DROP TABLE IF EXISTS dim_artists;"
+time_table_drop = "DROP TABLE IF EXISTS dim_time;"
 
 # CREATE TABLES
 ## VARCHAR used in lieu of Numeric/Float/Double as values were not being import correctly
@@ -47,7 +47,7 @@ staging_events_table_create= ("""CREATE TABLE IF NOT EXISTS staging_events_table
                                     ts BIGINT,
                                     userAgent VARCHAR,
                                     userId INT
-                                )
+                                );
 """)
 
 staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs_table
@@ -62,7 +62,7 @@ staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs_table
                                     title VARCHAR,
                                     duration VARCHAR,
                                     year INT
-                                )
+                                );
 """)
 ## Redshift does not have ON CONFLICT type statement therefore intent
 ## must be considered using alternative methods during data ingestion
@@ -81,9 +81,8 @@ songplay_table_create = ("""CREATE TABLE IF NOT EXISTS fact_songplays
                             foreign key(user_id) references dim_users(user_id),
                             foreign key(start_time) references dim_time(start_time),
                             foreign key(artist_id) references dim_artists(artist_id),
-                            foreign key(song_id) references dim_songs(song_id),
-                            sortkey(start_time)
-                        );
+                            foreign key(song_id) references dim_songs(song_id)
+                        )sortkey(start_time);
 """)
 
 user_table_create = ("""CREATE TABLE IF NOT EXISTS dim_users 
@@ -92,9 +91,8 @@ user_table_create = ("""CREATE TABLE IF NOT EXISTS dim_users
                         first_name VARCHAR NOT NULL, 
                         last_name VARCHAR NOT NULL, 
                         gender CHAR NOT NULL, 
-                        level VARCHAR(4) NOT NULL,
-                        sortkey(level)
-                    );
+                        level VARCHAR(4) NOT NULL
+                    )sortkey(level);
 """)
 
 song_table_create = ("""CREATE TABLE IF NOT EXISTS dim_songs 
@@ -103,9 +101,8 @@ song_table_create = ("""CREATE TABLE IF NOT EXISTS dim_songs
                         artist_id VARCHAR NOT NULL, 
                         title VARCHAR NOT NULL, 
                         year INT NOT NULL, 
-                        duration FLOAT8 NOT NULL,
-                        sortkey(year)
-                    );
+                        duration FLOAT8 NOT NULL
+                    )sortkey(year);
 """)
 
 artist_table_create =   ("""CREATE TABLE IF NOT EXISTS dim_artists 
@@ -126,9 +123,8 @@ time_table_create = ("""CREATE TABLE IF NOT EXISTS dim_time
                         week INT NOT NULL, 
                         month INT NOT NULL, 
                         year INT NOT NULL, 
-                        weekday VARCHAR NOT NULL,
-                        sortkey(start_time)
-                    );
+                        weekday VARCHAR NOT NULL
+                    )sortkey(start_time);
 """)
 
 # STAGING TABLES
@@ -250,7 +246,7 @@ modify_staging_events_table = ("""
 
 # QUERY LISTS
 
-create_table_queries = [staging_events_table_create, staging_songs_table_create, songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
+create_table_queries = [staging_events_table_create, staging_songs_table_create, user_table_create, song_table_create, artist_table_create, time_table_create, songplay_table_create]
 drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
 copy_table_queries = [staging_events_copy, staging_songs_copy]
 insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]

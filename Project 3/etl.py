@@ -1,6 +1,6 @@
 import configparser
 import psycopg2
-from sql_queries import copy_table_queries, insert_table_queries, clean_table_queries, modify_staging_events_table, show_tables_query
+from sql_queries import copy_table_queries, insert_table_queries, clean_table_queries, modify_staging_events_table
 
 def load_staging_tables(cur, conn):
     for query in copy_table_queries:
@@ -38,13 +38,22 @@ def insert_tables(cur, conn):
         conn.commit()
 
 def show_tables(cur,conn):
-    for query in show_tables_query:
-        cur.execute(query)
-        conn.commit()
-        row = cur.fetchone()
-        while row:
-            print(row)
-            row = cur.fetchone()
+    cur.execute("SELECT COUNT(*) FROM fact_songplays")
+    num = cur.fetchone()[0]
+    print("Total entries in fact_songplays: " + str(num))
+    cur.execute("SELECT COUNT(*) FROM dim_songs")
+    num = cur.fetchone()[0]
+    print("Total entries in dim_songs: " + str(num))
+    cur.execute("SELECT COUNT(*) FROM dim_users")
+    num = cur.fetchone()[0]
+    print("Total entries in dim_users: " + str(num))
+    cur.execute("SELECT COUNT(*) FROM dim_artists")
+    num = cur.fetchone()[0]
+    print("Total entries in dim_artists: " + str(num))
+    cur.execute("SELECT COUNT(*) FROM dim_time")
+    num = cur.fetchone()[0]
+    print("Total entries in dim_time: " + str(num))
+
 
 def main():
     config = configparser.ConfigParser()

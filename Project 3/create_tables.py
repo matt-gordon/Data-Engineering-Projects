@@ -62,6 +62,7 @@ def main():
     cur = conn.cursor()
     print("Connected to cluster...")
     drop_tables(cur, conn)
+    print("Existing tables dropped...")
     create_tables(cur, conn)
     print("Tables created...")
 

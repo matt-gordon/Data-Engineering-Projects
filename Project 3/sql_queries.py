@@ -229,9 +229,6 @@ modify_staging_events_table = ("""
                                 UPDATE staging_events_table SET start_time = (SELECT TIMESTAMP 'epoch' + ts/1000*INTERVAL '1 second');
 """)
 
-# SHOW TABLES to demonstrate correct loading of Fact and Dimension Tables
-show_tables_query = ["SELECT * FROM fact_songplays LIMIT 5;","SELECT * FROM dim_songs LIMIT 5;","SELECT * FROM dim_users LIMIT 5;","SELECT * FROM dim_artists LIMIT 5;","SELECT * FROM dim_time LIMIT 5;"]
-
 # QUERY LISTS
 
 create_table_queries = [staging_events_table_create, staging_songs_table_create, songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]

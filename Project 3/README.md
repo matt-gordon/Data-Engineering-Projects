@@ -53,6 +53,8 @@ As an intermediate step, the JSON log and song files are initially loaded into s
 
 ![Staging Tables](./Resources/Project3_staging_tables.png)
 
+Note: After data cleaning routines, start_time (TIMESTAMP) is added to staging_events_table; start_time is then referenced for table population and original ts column is no longer used.
+
 ## Relational Database Structure
 
 Based upon the available data and needs of Sparkify, the following Postgres database design was utilised containing one Fact Table (songplays) and four Dimension Tables (users, artists, songs and time). The Star Schema representation is shown below. <br>

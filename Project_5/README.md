@@ -31,8 +31,7 @@ The purpose of this project is to establish a Data Pipeline using Airflow to aut
     Schema: Enter dev. This is the Redshift database you want to connect to.  
     Login: Enter awsuser.  
     Password: Enter the password you created when launching your Redshift cluster.  
-    Port: Enter 5439.  
-
+    Port: Enter 5439.
 
 Note: The redshift cluster needs to be created in the same region as the S3 bucket being used.
 
@@ -40,18 +39,25 @@ Note: The redshift cluster needs to be created in the same region as the S3 buck
 
 ## DAG Descriptions:
 
-![Sparkify_DAG](./Resources/sparkify_dag_image.png)  
-  
-[To be Updated]  
+![Sparkify_DAG](./Resources/sparkify_dag_image.png)
+
+Start_execution:  
+Stage_events:  
+Stage_songs:  
+Load_songplays_fact_table:  
+Load_user_dim_table:  
+Load_song_dim_table:  
+Load_artist_dim_table:  
+Load_time_dim_table:  
+Run_data_quality_checks:  
+Stop_execution:  
 
 
 ## Staging Tables
 
-As an intermediate step, the JSON log and song files are initially loaded into staging_events_table and staging_songs_table respectively. Basic data integrity/cleaning checks are made prior to loading the data into the Fact and Dimension tables.
+As an intermediate step, the JSON log and song files are initially loaded into staging_events and staging_songs respectively. Basic data integrity/cleaning checks are made prior to loading the data into the Fact and Dimension tables.
 
 ![Staging Tables](./Resources/Project5_staging_tables.png)
-
-Note: After data cleaning routines, start_time (TIMESTAMP) is added to staging_events_table; start_time is then referenced for table population and original ts column is no longer used.
 
 ## Relational Database Structure
 
@@ -61,8 +67,12 @@ Based upon the available data and needs of Sparkify, the following Postgres data
 
 The tables were generated as per the Project specification. It is noted that they are almost normalised, with the exception of 'level' not being a primary key in the users table, yet being duplicated in the songplays table. This duplication should be investigated further with the view to remove 'level' from the songplays table to avoid duplication.
 
-## OPPORTUNITIES FOR IMPROVEMENT
+## OPPORTUNITIES FOR IMPROVEMENT / UPDATES
 
 <ol>
-<li> XXX </li>
+<li> Update the StageToRedshiftOperator to use the execution_date to only read in the relevant log file for processing </li>
+<li> Update the quality checks being run </li>
+<li> Add process to save the fact and dimension tables back into S3 for the analytics team to use. </li>
+<li> Add a check to StageToRedshiftOperator so that if log files are missing for a specific date, it skips the remainder of the dag processing </li>
+<li> Investigate how updates to missing data can be handled by the dag to automatically check for and include it in the processsed tables if found. i.e. If a log file from last week was added, it gets detected and processed in the next run of the dag. </li>  
 </ol>

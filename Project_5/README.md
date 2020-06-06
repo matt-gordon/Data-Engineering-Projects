@@ -37,7 +37,9 @@ Source: Udacity Data Engineering Course Notes
 
 Note: The redshift cluster needs to be created in the same region as the S3 bucket being used.
 
-![Redshift Cluster Connection Details](./Resources/connection-redshift.png)
+![Redshift Cluster Connection Details](./Resources/connection-redshift.png)  
+Source: Udacity Data Engineering Course Notes  
+
 
 ## DAG Descriptions:
 

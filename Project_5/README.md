@@ -4,7 +4,7 @@
 
 The purpose of this project is to establish a Data Pipeline using Airflow to automate the ETL process on AWS to create reliable, fresh data analytics tables to support Sparkify analytics team better understand our users and support future app updates/business decisions.
 
-## Running:
+## Setup / Running:
 
 ### DAG and Operator files
 
@@ -43,13 +43,21 @@ Note: The redshift cluster needs to be created in the same region as the S3 buck
 
 Start_execution: Dummy operation representing the start of the dag. In the future this could be used to run checks on whether the dag needs to be run. For example, check if there is new data that needs processing and if not log and skip.  
 Stage_events: This operation uses the StageToRedshiftOperator to copy all log events in json format from the S3 bucket into table staging_events. Basic data cleaning can be conducted at this stage by making clean_data flag as True and passing in the specific queries.  
+  
 Stage_songs: This operation uses the StageToRedshiftOperator to copy all song details in json format from the S3 bucket into table staging_songs. Basic data cleaning can be conducted at this stage by making clean_data flag as True and passing in the specific queries.  
+  
 Load_songplays_fact_table: This operation uses the LoadFactOperator to populate the Songplays fact table from the staging tables.  
-Load_user_dim_table: This operation uses the LoadDimensionOperator to populate the User dimension table from the stagin tables. The truncate_mode flag allows the toggling between append & truncate modes if the table already exists in Redshift.  
+  
+Load_user_dim_table: This operation uses the LoadDimensionOperator to populate the User dimension table from the stagin tables. The truncate_mode flag allows the toggling between append & truncate modes if the table already exists in Redshift.
+
 Load_song_dim_table: This operation uses the LoadDimensionOperator to populate the Song dimension table from the stagin tables. The truncate_mode flag allows the toggling between append & truncate modes if the table already exists in Redshift.  
+  
 Load_artist_dim_table: This operation uses the LoadDimensionOperator to populate the Artist dimension table from the stagin tables. The truncate_mode flag allows the toggling between append & truncate modes if the table already exists in Redshift.  
+  
 Load_time_dim_table: This operation uses the LoadDimensionOperator to populate the Time dimension table from the stagin tables. The truncate_mode flag allows the toggling between append & truncate modes if the table already exists in Redshift.  
+  
 Run_data_quality_checks: This operation uses the DataQualityOperator to run data quality checks on the fact and dimension tables. The test queries and expected results need to be defined in data_checking.py contained in the helper folder.  
+  
 Stop_execution: This is a dummy operation representing the end of the dag. In the future some custom reporting or logging tasks could be initiated here.
 
 Inputs for the custom operators are defined in the plugins/operators README.

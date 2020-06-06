@@ -17,21 +17,21 @@ The purpose of this project is to establish a Data Pipeline using Airflow to aut
 ![Connections](./Resources/admin-connections.png)
 
 1.  aws_credentials:  
-    Conn Id: Enter aws_credentials.  
-    Conn Type: Enter Amazon Web Services.  
-    Login: Enter your Access key ID from the IAM User credentials.  
-    Password: Enter your Secret access key from the IAM User credentials.
+    **Conn Id**: Enter aws_credentials.  
+    **Conn Type**: Enter Amazon Web Services.  
+    **Login**: Enter your Access key ID from the IAM User credentials.  
+    **Password**: Enter your Secret access key from the IAM User credentials.
 
 ![AWS Credentials](./Resources/connection-aws-credentials.png)
 
 2.  redshift:  
-    Conn Id: Enter redshift.  
-    Conn Type: Enter Postgres.  
-    Host: Enter the endpoint of your Redshift cluster, excluding the port at the end. You can find this by selecting your cluster in the Clusters page of the Amazon Redshift console. See where this is located in the screenshot below. IMPORTANT: Make sure to NOT include the port at the end of the Redshift endpoint string.  
-    Schema: Enter dev. This is the Redshift database you want to connect to.  
-    Login: Enter awsuser.  
-    Password: Enter the password you created when launching your Redshift cluster.  
-    Port: Enter 5439.
+    **Conn Id**: Enter redshift.  
+    **Conn Type**: Enter Postgres.  
+    **Host**: Enter the endpoint of your Redshift cluster, excluding the port at the end. You can find this by selecting your cluster in the Clusters page of the Amazon Redshift console. See where this is located in the screenshot below. IMPORTANT: Make sure to NOT include the port at the end of the Redshift endpoint string.  
+    **Schema**: Enter dev. This is the Redshift database you want to connect to.  
+    **Login**: Enter awsuser.  
+    **Password**: Enter the password you created when launching your Redshift cluster.  
+    **Port**: Enter 5439.
 
 Note: The redshift cluster needs to be created in the same region as the S3 bucket being used.
 

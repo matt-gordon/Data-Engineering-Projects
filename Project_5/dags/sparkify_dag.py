@@ -40,7 +40,6 @@ stage_events_to_redshift = StageToRedshiftOperator(
     format = "json 's3://udacity-dend/log_json_path.json'",
     clean_data=True,
     cleaning_query=CleanData.clean_staging_events_table,
-    provide_context=True
 )
 
 stage_songs_to_redshift = StageToRedshiftOperator(
@@ -55,7 +54,6 @@ stage_songs_to_redshift = StageToRedshiftOperator(
     format="json 'auto'",
     clean_data=True,
     cleaning_query=CleanData.clean_staging_songs_table,
-    provide_context=True
 )
 
 load_songplays_table = LoadFactOperator(

@@ -14,9 +14,8 @@ The purpose of this project is to establish a Data Pipeline using Airflow to aut
 
 - Prior to running the 'sparkify_dag' DAG, ensure the following connections have been setup:
 
-![Connections](./Resources/admin-connections.png)
-Source: Udacity Data Engineering Course Notes  
-
+![Connections](./Resources/admin-connections.png)  
+Source: Udacity Data Engineering Course Notes
 
 1.  aws_credentials:  
     **Conn Id**: Enter aws_credentials.  
@@ -24,7 +23,7 @@ Source: Udacity Data Engineering Course Notes
     **Login**: Enter your Access key ID from the IAM User credentials.  
     **Password**: Enter your Secret access key from the IAM User credentials.
 
-![AWS Credentials](./Resources/connection-aws-credentials.png)
+![AWS Credentials](./Resources/connection-aws-credentials.png)  
 Source: Udacity Data Engineering Course Notes
 
 2.  redshift:  

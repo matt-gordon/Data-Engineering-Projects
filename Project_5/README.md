@@ -41,31 +41,26 @@ Note: The redshift cluster needs to be created in the same region as the S3 buck
 
 ![Sparkify_DAG](./Resources/sparkify_dag_image.png)
 
-Start_execution:  
-Stage_events:  
-Stage_songs:  
-Load_songplays_fact_table:  
-Load_user_dim_table:  
-Load_song_dim_table:  
-Load_artist_dim_table:  
-Load_time_dim_table:  
-Run_data_quality_checks:  
-Stop_execution:  
+Start_execution: Dummy operation representing the start of the dag. In the future this could be used to run checks on whether the dag needs to be run. For example, check if there is new data that needs processing and if not log and skip.  
+Stage_events: This operation uses the StageToRedshiftOperator to copy all log events in json format from the S3 bucket into table staging_events. Basic data cleaning can be conducted at this stage by making clean_data flag as True and passing in the specific queries.  
+Stage_songs: This operation uses the StageToRedshiftOperator to copy all song details in json format from the S3 bucket into table staging_songs. Basic data cleaning can be conducted at this stage by making clean_data flag as True and passing in the specific queries.  
+Load_songplays_fact_table: This operation uses the LoadFactOperator to populate the Songplays fact table from the staging tables.  
+Load_user_dim_table: This operation uses the LoadDimensionOperator to populate the User dimension table from the stagin tables. The truncate_mode flag allows the toggling between append & truncate modes if the table already exists in Redshift.  
+Load_song_dim_table: This operation uses the LoadDimensionOperator to populate the Song dimension table from the stagin tables. The truncate_mode flag allows the toggling between append & truncate modes if the table already exists in Redshift.  
+Load_artist_dim_table: This operation uses the LoadDimensionOperator to populate the Artist dimension table from the stagin tables. The truncate_mode flag allows the toggling between append & truncate modes if the table already exists in Redshift.  
+Load_time_dim_table: This operation uses the LoadDimensionOperator to populate the Time dimension table from the stagin tables. The truncate_mode flag allows the toggling between append & truncate modes if the table already exists in Redshift.  
+Run_data_quality_checks: This operation uses the DataQualityOperator to run data quality checks on the fact and dimension tables. The test queries and expected results need to be defined in data_checking.py contained in the helper folder.  
+Stop_execution: This is a dummy operation representing the end of the dag. In the future some custom reporting or logging tasks could be initiated here.
 
+Inputs for the custom operators are defined in the plugins/operators README.
 
 ## Staging Tables
-
-As an intermediate step, the JSON log and song files are initially loaded into staging_events and staging_songs respectively. Basic data integrity/cleaning checks are made prior to loading the data into the Fact and Dimension tables.
 
 ![Staging Tables](./Resources/Project5_staging_tables.png)
 
 ## Relational Database Structure
 
-Based upon the available data and needs of Sparkify, the following Postgres database design was utilised containing one Fact Table (songplays) and four Dimension Tables (users, artists, songs and time). The Star Schema representation is shown below. <br>
-
 ![Star Schema](./Resources/Project5_star_schema.png)
-
-The tables were generated as per the Project specification. It is noted that they are almost normalised, with the exception of 'level' not being a primary key in the users table, yet being duplicated in the songplays table. This duplication should be investigated further with the view to remove 'level' from the songplays table to avoid duplication.
 
 ## OPPORTUNITIES FOR IMPROVEMENT / UPDATES
 
@@ -75,4 +70,5 @@ The tables were generated as per the Project specification. It is noted that the
 <li> Add process to save the fact and dimension tables back into S3 for the analytics team to use. </li>
 <li> Add a check to StageToRedshiftOperator so that if log files are missing for a specific date, it skips the remainder of the dag processing </li>
 <li> Investigate how updates to missing data can be handled by the dag to automatically check for and include it in the processsed tables if found. i.e. If a log file from last week was added, it gets detected and processed in the next run of the dag. </li>  
+<li>  Change DataQualityOperator to force failure of the dag if the data checks fail.  Currently the operator still defaults to the retry policy, prolonging the completion of the dag.
 </ol>

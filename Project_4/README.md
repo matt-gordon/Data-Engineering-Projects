@@ -35,4 +35,5 @@ Based upon the available data and needs of Sparkify, the following Postgres data
 <ol>
 <li> Generate a dashboard that visualise popular Sparkify Analytics Team queries from the S3 bucket parquet files</li>
 <li> Implement data cleaning in the etl.py script.</li>
+<li> Implement data encryption of the Sparkify data in the S3 bucket </li>
 </ol>
